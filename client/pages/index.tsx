@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import TextCard from "@/components/TextCard";
+import ImageCard from "@/components/ImageCard";
 import UploadButton from "@/components/UploadButton";
 import ProcessBoard from "@/components/ProcessBoard";
 
@@ -15,13 +16,7 @@ function Home() {
           <UploadButton type="hot" />
           <ProcessBoard setResultPath={setResultPath} />
         </div>
-        <div className="column">
-          <img
-            src={resultPath}
-            alt="Image will appear here"
-            className="image"
-          />
-        </div>
+        <ImageCard path={resultPath} />
       </div>
     </div>
   );

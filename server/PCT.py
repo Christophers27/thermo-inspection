@@ -29,6 +29,12 @@ def PCT(video, normMethod="col-wise standardize", EOFs=2):
             A[i] = (row - np.mean(row)) / np.std(row)
     elif normMethod == "mean reduction":
         A = A - np.mean(A)
+    else:
+        print("Invalid normalization method, defaulting to col-wise standardize")
+        mean = np.mean(A, axis=0)
+        std = np.std(A, axis=0)
+        epsilon = 1e-5
+        A = (A - mean) / (std + epsilon)
 
     # Perform Singular Value Decomposition (SVD)
     U, _, _ = np.linalg.svd(A, full_matrices=False)

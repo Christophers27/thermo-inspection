@@ -70,9 +70,6 @@ def processVideo():
     resPath = process(coldPath, hotPath, "client/public/", method, options)
     resPath = resPath.removeprefix("client/public/")
 
-    # Reset global variables
-    coldPath, hotPath = None, None
-
     return jsonify({"message": "Video processed successfully", "path": resPath})
 
 

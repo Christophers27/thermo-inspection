@@ -130,6 +130,9 @@ def process(coldPath, hotPath, savePath="temp/", method="PCT", options={}):
         print("Performing PCT...")
         numEOFs = int(options.get("numEOFs", 6))
         normMethod = options.get("normMethod", "col-wise standardize")
+
+        print(normMethod)
+
         EOFs = PCT(hot, normMethod, numEOFs)
 
         print("Displaying results...")

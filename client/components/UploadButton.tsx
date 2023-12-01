@@ -47,7 +47,7 @@ function UploadButton({ type }: { type: string }) {
           />
           <h1>Browse file explorer</h1>
         </label>
-        <button onClick={handleUpload} className={styles.button}>
+        <button onClick={handleUpload} className="button">
           Upload {type} video
         </button>
         <h1 className={styles.text}>{status}</h1>
