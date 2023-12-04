@@ -6,6 +6,13 @@
   margin: 16px;
 }
 
+.innerWrapper {
+  margin: 8px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
 .row {
   display: flex;
   flex-direction: row;
@@ -25,7 +32,7 @@
 
 .button {
   display: inline-block;
-  padding: 10px 20px;
+  padding: 8px 16px;
   font-size: 20px;
   text-align: center;
   background-color: #cc002b;
@@ -43,4 +50,8 @@
 
 .button:active {
   background-color: #cc002b;
+}
+
+.rightAlign {
+  margin-left: auto;
 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TextCard from "@/components/TextCard";
 import ImageCard from "@/components/ImageCard";
-import UploadButton from "@/components/UploadButton";
+import FileSelectButton from "@/components/FileSelectButton";
 import ProcessBoard from "@/components/ProcessBoard";
 
 function Home() {
@@ -12,8 +12,8 @@ function Home() {
       <TextCard>AirLab Thermographic Inspection Tool</TextCard>
       <div className="row">
         <div className="column">
-          <UploadButton type="cold" />
-          <UploadButton type="hot" />
+          <FileSelectButton type="cold" />
+          <FileSelectButton type="hot" />
           <ProcessBoard setResultPath={setResultPath} />
         </div>
         <ImageCard path={resultPath} />

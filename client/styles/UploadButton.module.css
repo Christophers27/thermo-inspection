@@ -1,49 +1,16 @@
 .wrapper {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin: 8px;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 8px;
-}
-
-.button {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 20px;
-  text-align: center;
-  background-color: #cc002b;
-  color: #fff;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-  height: fit-content;
-  margin: 8px;
-}
-
-.button:hover {
-  background-color: #ff3355;
-}
-
-.button:active {
-  background-color: #cc002b;
-}
-
-.input[type="file"] {
-  display: none;
-}
-
-.fileSelect {
-  font-size: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  cursor: pointer;
-  margin: 8px;
-  padding: 10px 20px;
-}
-
-.text {
-    font-size: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin: 8px;
-    padding: 10px 20px;
 }

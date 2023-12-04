@@ -1,16 +1,8 @@
 import React, { useState } from "react";
 import styles from "@/styles/UploadButton.module.css";
-import TextCard from "./TextCard";
 
-function UploadButton({ type }: { type: string }) {
-  const [file, setFile] = useState<File | null>(null);
+function UploadButton({ file, type }: { file: File; type: string }) {
   const [status, setStatus] = useState("Idle");
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  };
 
   async function handleUpload() {
     if (file) {
@@ -34,24 +26,18 @@ function UploadButton({ type }: { type: string }) {
         setStatus("Error");
       }
     }
-  };
+  }
 
   return (
     <div className={styles.wrapper}>
-      <div className="row">
-        <label className={styles.fileSelect}>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className={styles.input}
-          />
-          <h1>Browse file explorer</h1>
-        </label>
-        <button onClick={handleUpload} className="button">
-          Upload {type} video
-        </button>
-        <h1 className={styles.text}>{status}</h1>
+      <div className={styles.info}>
+        <h1>Status: {status}</h1>
+        <h1>Name: {file.name}</h1>
       </div>
+
+      <button className="button" onClick={handleUpload}>
+        Upload
+      </button>
     </div>
   );
 }

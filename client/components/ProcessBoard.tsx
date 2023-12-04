@@ -58,7 +58,7 @@ function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
         })}
       </div>
 
-      <button onClick={process} className={styles.button}>
+      <button onClick={process} className="button rightAlign">
         Process
       </button>
     </div>
