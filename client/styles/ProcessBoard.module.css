@@ -18,13 +18,18 @@
 }
 
 .options {
-  display: flex;
-  flex-direction: column;
+  padding: 8px;
+  margin: 8px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  margin: 8px;
-  padding: 8px;
-  width: fit-content;
+}
+
+.optionRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: center;
 }
 
 .input[type="text"] {

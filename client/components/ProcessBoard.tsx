@@ -3,9 +3,31 @@ import styles from "@/styles/ProcessBoard.module.css";
 
 // The string values in the options must exactly match the names of the options
 // in server/process.py
-const methodOptions: { [key: string]: string[] } = {
-  PCT: ["numEOFs", "normMethod"],
-  SPCT: ["numEOFs", "normMethod"],
+type MethodOptions = {
+  [key: string]: {
+    numEOFs: number[];
+    normMethod: string[];
+  };
+};
+
+const methodOptions: MethodOptions = {
+  PCT: {
+    numEOFs: [1, 2, 3, 4, 5, 6],
+    normMethod: [
+      "col-wise standardize",
+      "row-wise standardize",
+      "mean reduction",
+    ],
+  },
+  SPCT: {
+    numEOFs: [1, 2, 3, 4, 5, 6],
+    normMethod: [
+      "col-wise standardize",
+      "row-wise standardize",
+      "mean reduction",
+      "col-wise mean reduction",
+    ]
+  }
 };
 
 function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
@@ -42,19 +64,27 @@ function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
       </select>
 
       <div className={styles.options}>
-        {methodOptions[method].map((option) => {
+        {Object.keys(methodOptions[method]).map((option) => {
           return (
-            <div key={option}>
-              <label>{option}: </label>
-              <input
-                type="text"
-                className={styles.input}
-                onChange={(event) => {
-                  setOptions({ ...options, [option]: event.target.value });
-                }}
-              />
+            <div key={option} className={styles.optionRow}>
+              <p className={styles.optionName}>{option}: </p>
+              <select
+                onChange={(event) =>
+                  setOptions((prev) => ({
+                    ...prev,
+                    [option]: event.target.value,
+                  }))
+                }
+                className={styles.select}
+              >
+                {methodOptions[method][option].map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
             </div>
-          );
+          )
         })}
       </div>
 
