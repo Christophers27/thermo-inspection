@@ -26,8 +26,8 @@ const methodOptions: MethodOptions = {
       "row-wise standardize",
       "mean reduction",
       "col-wise mean reduction",
-    ]
-  }
+    ],
+  },
 };
 
 function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
@@ -55,6 +55,30 @@ function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
     }
   }
 
+  function readJSON(event: React.ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files) {
+      console.log("No valid file selected");
+      return;
+    } else {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = (event) => {
+        if (event.target) {
+          const result = JSON.parse(event.target.result as string);
+
+          setMethod(result.method);
+          setOptions(result.options);
+
+          console.log(event.target.result);
+        }
+      };
+      reader.onerror = (event) => {
+        console.log("Error reading file: ", event.target?.error);
+      };
+    }
+  }
+
   return (
     <div className={styles.wrapper}>
       <select
@@ -63,31 +87,35 @@ function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
       >
         <option value="PCT">PCT</option>
         <option value="SPCT">SPCT</option>
+        <option value="import JSON">Import JSON</option>
       </select>
 
       <div className={styles.options}>
-        {Object.keys(methodOptions[method]).map((option) => {
-          return (
-            <div key={option} className={styles.optionRow}>
-              <p className={styles.optionName}>{option}: </p>
-              <select
-                onChange={(event) =>
-                  setOptions((prev) => ({
-                    ...prev,
-                    [option]: event.target.value,
-                  }))
-                }
-                className={styles.select}
-              >
-                {methodOptions[method][option].map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )
-        })}
+        {method != "import JSON" &&
+          Object.keys(methodOptions[method]).map((option) => {
+            return (
+              <div key={option} className={styles.optionRow}>
+                <p className={styles.optionName}>{option}: </p>
+                <select
+                  onChange={(event) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      [option]: event.target.value,
+                    }))
+                  }
+                  className={styles.select}
+                >
+                  {methodOptions[method][option].map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            );
+          })}
+
+        {method === "import JSON" && <input type="file" accept=".json" onChange={readJSON} />}
       </div>
 
       <button onClick={process} className="button rightAlign">

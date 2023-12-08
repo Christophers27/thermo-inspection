@@ -1,0 +1,7 @@
+{
+    "method": "PCT",
+    "options": {
+        "numEOFs": 2,
+        "normMethods": "col-wise standardize"
+    }
+}
