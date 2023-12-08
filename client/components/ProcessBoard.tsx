@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styles from "@/styles/ProcessBoard.module.css";
 
+import TextCard from "./TextCard";
+
 // The string values in the options must exactly match the names of the options
 // in server/process.py
 type MethodOptions = {
@@ -80,47 +82,47 @@ function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <select
-        onChange={(event) => setMethod(event.target.value)}
-        className={styles.select}
-      >
-        <option value="PCT">PCT</option>
-        <option value="SPCT">SPCT</option>
-        <option value="import JSON">Import JSON</option>
-      </select>
-
-      <div className={styles.options}>
-        {method != "import JSON" &&
-          Object.keys(methodOptions[method]).map((option) => {
-            return (
-              <div key={option} className={styles.optionRow}>
-                <p className={styles.optionName}>{option}: </p>
-                <select
-                  onChange={(event) =>
-                    setOptions((prev) => ({
-                      ...prev,
-                      [option]: event.target.value,
-                    }))
-                  }
-                  className={styles.select}
-                >
-                  {methodOptions[method][option].map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            );
-          })}
-
-        {method === "import JSON" && <input type="file" accept=".json" onChange={readJSON} />}
+    <div className={styles.outerWrapper}>
+      <TextCard>Select Method</TextCard>
+      <div className={styles.innerWrapper}>
+        <select
+          onChange={(event) => setMethod(event.target.value)}
+          className={styles.select}
+        >
+          <option value="PCT">PCT</option>
+          <option value="SPCT">SPCT</option>
+          <option value="import JSON">Import JSON</option>
+        </select>
+        <div className={styles.options}>
+          {method != "import JSON" &&
+            Object.keys(methodOptions[method]).map((option) => {
+              return (
+                <div key={option} className={styles.optionRow}>
+                  <p className={styles.optionName}>{option}: </p>
+                  <select
+                    onChange={(event) =>
+                      setOptions((prev) => ({
+                        ...prev,
+                        [option]: event.target.value,
+                      }))
+                    }
+                    className={styles.select}
+                  >
+                    {methodOptions[method][option].map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              );
+            })}
+          {method === "import JSON" && <input type="file" accept=".json" onChange={readJSON} />}
+        </div>
+        <button onClick={process} className="button rightAlign">
+          Process
+        </button>
       </div>
-
-      <button onClick={process} className="button rightAlign">
-        Process
-      </button>
     </div>
   );
 }
