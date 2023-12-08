@@ -12,7 +12,7 @@ type MethodOptions = {
 
 const methodOptions: MethodOptions = {
   PCT: {
-    numEOFs: [1, 2, 3, 4, 5, 6],
+    numEOFs: [2, 4, 6],
     normMethod: [
       "col-wise standardize",
       "row-wise standardize",
@@ -20,7 +20,7 @@ const methodOptions: MethodOptions = {
     ],
   },
   SPCT: {
-    numEOFs: [1, 2, 3, 4, 5, 6],
+    numEOFs: [2, 4, 6],
     normMethod: [
       "col-wise standardize",
       "row-wise standardize",
@@ -35,6 +35,8 @@ function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
   const [options, setOptions] = useState({});
 
   async function process() {
+    setResultPath("");
+
     const formData = new FormData();
     formData.append("method", method);
     formData.append("options", JSON.stringify(options));

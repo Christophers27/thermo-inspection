@@ -131,8 +131,6 @@ def process(coldPath, hotPath, savePath="temp/", method="PCT", options={}):
         numEOFs = int(options.get("numEOFs", 6))
         normMethod = options.get("normMethod", "col-wise standardize")
 
-        print(normMethod)
-
         EOFs = PCT(hot, normMethod, numEOFs)
 
         print("Displaying results...")
@@ -157,3 +155,31 @@ def process(coldPath, hotPath, savePath="temp/", method="PCT", options={}):
             np.save(savePath + f"EOF{i}.npy", EOF)
 
         return plotPath
+    
+
+if __name__ == "__main__":
+    from display import normalize
+
+    coldPath = "temp/2023-12-01-05-before-left.mp4"
+    hotPath = "temp/2023-12-01-60-after-left.mp4"
+
+    coldMask, hotMask = createMask(coldPath, hotPath)
+    cold, hot = readVideo(coldMask), readVideo(hotMask)
+
+    coldMean = np.mean(cold, axis=0)
+    hotMean = np.mean(hot, axis=0)
+
+    coldNormalized = normalize(coldMean)
+    hotNormalized = normalize(hotMean)
+
+    diff = hotNormalized - coldNormalized
+
+    cv2.imshow("cold", coldNormalized)
+    cv2.imshow("hot", hotNormalized)
+    cv2.imshow("diff", diff)
+
+    cv2.resizeWindow("cold", 500, 500)
+    cv2.resizeWindow("hot", 500, 500)
+    cv2.resizeWindow("diff", 500, 500)
+
+    cv2.waitKey(0)
