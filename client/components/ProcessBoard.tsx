@@ -32,12 +32,13 @@ const methodOptions: MethodOptions = {
   },
 };
 
-function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
+function ProcessBoard({ setResultPath, setStatus }: { setResultPath: Function, setStatus: Function }) {
   const [method, setMethod] = useState("PCT");
   const [options, setOptions] = useState({});
 
   async function process() {
     setResultPath("");
+    setStatus(true)
 
     const formData = new FormData();
     formData.append("method", method);
@@ -52,8 +53,10 @@ function ProcessBoard({ setResultPath }: { setResultPath: Function }) {
       const data = await res.json();
       console.log(data);
       setResultPath(data.path);
+      setStatus(false)
     } catch (err) {
       console.log(err);
+      setStatus(false)
     }
   }
 

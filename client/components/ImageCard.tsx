@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "@/styles/ImageCard.module.css";
+import TextCard from "./TextCard";
 
-function ImageCard({ path }: { path: string }) {
+function ImageCard({ path, status }: { path: string; status: boolean }) {
   const download = (fileName, content) => {
     var element = document.createElement("a");
     element.setAttribute("href", content);
@@ -12,14 +13,14 @@ function ImageCard({ path }: { path: string }) {
     element.click();
 
     document.body.removeChild(element);
-  }
+  };
 
   const handleDownload = async (e) => {
     try {
       const result = await fetch(path, {
         method: "GET",
-        headers: {}
-      })
+        headers: {},
+      });
 
       const blob = await result.blob();
       const url = URL.createObjectURL(blob);
@@ -29,14 +30,25 @@ function ImageCard({ path }: { path: string }) {
     } catch (err) {
       console.log(err);
     }
-  }
-  
+  };
+
   return (
     <div className={styles.container}>
-      <img src={path} alt="Image will appear here" className={styles.image} />
-      <button onClick={handleDownload} type="button" className="button">
-        Download
-      </button>
+      {status ? (
+        <p>Processing ...</p>
+      ) : (
+        <div>
+          <TextCard>Image Viewer</TextCard>
+          <img
+            src={path}
+            alt="Image will appear here"
+            className={styles.image}
+          />
+          <button onClick={handleDownload} type="button" className="button">
+            Download
+          </button>
+        </div>
+      )}
     </div>
   );
 }

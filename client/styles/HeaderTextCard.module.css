@@ -1,0 +1,13 @@
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #cc002b;
+  color: #fff;
+}
