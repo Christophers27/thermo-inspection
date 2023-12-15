@@ -43,10 +43,17 @@ def createMask(path1, path2):
         newPath1, newPath2: Tuple of the paths to the masked videos
     """
     vid1, vid2 = cv2.VideoCapture(path1), cv2.VideoCapture(path2)
-    newPath1 = path1.replace(".mp4", "_mask.mp4")
-    newPath2 = path2.replace(".mp4", "_mask.mp4")
-    fps = vid1.get(cv2.CAP_PROP_FPS)
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+
+    if path1.endswith(".mp4"):
+        newPath1 = path1.replace(".mp4", "_mask.mp4")
+        newPath2 = path2.replace(".mp4", "_mask.mp4")
+        fps = vid1.get(cv2.CAP_PROP_FPS)
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    elif path1.endswith(".avi"):
+        newPath1 = path1.replace(".avi", "_mask.avi")
+        newPath2 = path2.replace(".avi", "_mask.avi")
+        fps = vid1.get(cv2.CAP_PROP_FPS)
+        fourcc = cv2.VideoWriter_fourcc(*"XVID")
 
     # Create window to display frame and select RoI.
     ret, frame1 = vid1.read()
@@ -155,31 +162,3 @@ def process(coldPath, hotPath, savePath="temp/", method="PCT", options={}):
             np.save(savePath + f"EOF{i}.npy", EOF)
 
         return plotPath
-    
-
-if __name__ == "__main__":
-    from display import normalize
-
-    coldPath = "temp/2023-12-01-05-before-left.mp4"
-    hotPath = "temp/2023-12-01-60-after-left.mp4"
-
-    coldMask, hotMask = createMask(coldPath, hotPath)
-    cold, hot = readVideo(coldMask), readVideo(hotMask)
-
-    coldMean = np.mean(cold, axis=0)
-    hotMean = np.mean(hot, axis=0)
-
-    coldNormalized = normalize(coldMean)
-    hotNormalized = normalize(hotMean)
-
-    diff = hotNormalized - coldNormalized
-
-    cv2.imshow("cold", coldNormalized)
-    cv2.imshow("hot", hotNormalized)
-    cv2.imshow("diff", diff)
-
-    cv2.resizeWindow("cold", 500, 500)
-    cv2.resizeWindow("hot", 500, 500)
-    cv2.resizeWindow("diff", 500, 500)
-
-    cv2.waitKey(0)

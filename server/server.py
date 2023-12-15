@@ -33,7 +33,7 @@ def upload():
         return jsonify({"message": "No file selected"})
 
     # Check if file is video
-    if file.filename.split(".")[-1] not in ["mp4", "avi", "mov"]:
+    if file.filename.split(".")[-1] not in ["mp4", "avi"]:
         return jsonify({"message": "File is not a video"})
 
     # Save file
