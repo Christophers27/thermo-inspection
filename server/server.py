@@ -53,11 +53,9 @@ def upload():
 def processVideo():
     global coldPath, hotPath
 
-    # Check if both videos are uploaded
-    if coldPath is None:
-        return jsonify({"message": "Cold video not uploaded"})
-    elif hotPath is None:
-        return jsonify({"message": "Hot video not uploaded"})
+    # Check if hot video is uploaded
+    if hotPath is None:
+        return jsonify({"message": "No hot video uploaded"})
 
     # Get processing method
     method = request.form["method"]

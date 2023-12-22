@@ -6,106 +6,90 @@ from PCT import PCT, SPCT
 from display import display
 
 
-def readVideo(path):
-    """Reads a video and returns a numpy array of the frames in grayscale
+def createMask2(path1, path2, isOneVideo=False):
+    if not isOneVideo:
+        vid1, vid2 = cv2.VideoCapture(path1), cv2.VideoCapture(path2)
+        cold, hot = [], []
 
-    Args:
-        path (str): Path to the video
+        # Create window to display frame and select RoI
+        ret, frame1 = vid1.read()
+        while True:
+            cv2.imshow("Press 's' to skip frame, 'c' to choose RoI", frame1)
+            key = cv2.waitKey(0) & 0xFF
+            if key == ord("s"):
+                cv2.destroyAllWindows()
+                ret, frame1 = vid1.read()
 
-    Returns:
-        np.ndarray: Numpy array of the frames in grayscale. Shape: (n_frames, height, width)
-    """
-    vid = cv2.VideoCapture(path)
-    res, ret = [], True
+                if not ret:
+                    raise Exception("Video 1 ended before selecting RoI")
 
-    while ret:
-        ret, frame = vid.read()
-        if ret:
-            res.append(
-                cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            )  # We convert the frame to grayscale to make it one channel
+                continue
+            elif key == ord("c"):
+                cv2.destroyAllWindows()
+                break
 
-    vid.release()
-    return np.stack(res, axis=0)
+        # Get RoI coordinates
+        x, y, w, h = cv2.selectROI("Select RoI", frame1)
 
-
-def createMask(path1, path2):
-    """Creates a mask for two videos. The mask is created by selecting a region of interest (RoI) in a frame from the first video (note that this requires the two videos to be aligned). The RoI is then used to mask the frames of both videos.
-
-    Args:
-        path1 (str): Path to the first video
-        path2 (str): Path to the second video
-
-    Raises:
-        Exception: If the first video ends before selecting the RoI
-
-    Returns:
-        newPath1, newPath2: Tuple of the paths to the masked videos
-    """
-    vid1, vid2 = cv2.VideoCapture(path1), cv2.VideoCapture(path2)
-
-    if path1.endswith(".mp4"):
-        newPath1 = path1.replace(".mp4", "_mask.mp4")
-        newPath2 = path2.replace(".mp4", "_mask.mp4")
-        fps = vid1.get(cv2.CAP_PROP_FPS)
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    elif path1.endswith(".avi"):
-        newPath1 = path1.replace(".avi", "_mask.avi")
-        newPath2 = path2.replace(".avi", "_mask.avi")
-        fps = vid1.get(cv2.CAP_PROP_FPS)
-        fourcc = cv2.VideoWriter_fourcc(*"XVID")
-
-    # Create window to display frame and select RoI.
-    ret, frame1 = vid1.read()
-    while True:
-        cv2.imshow("Press 's' to skip frame, 'c' to choose RoI", frame1)
-        key = cv2.waitKey(0) & 0xFF
-        if key == ord("s"):
-            cv2.destroyAllWindows()
-            ret, frame1 = vid1.read()
-
+        # Mask each frame for both videos
+        while True:
+            ret, frame = vid1.read()
             if not ret:
-                raise Exception("Video 1 ended before selecting RoI")
+                break
 
-            continue
-        elif key == ord("c"):
-            cv2.destroyAllWindows()
-            break
+            cold.append(cv2.cvtColor(frame[y : y + h, x : x + w], cv2.COLOR_BGR2GRAY))
 
-    # Select RoI
-    x, y, w, h = cv2.selectROI("Select RoI", frame1)
+        while True:
+            ret, frame = vid2.read()
+            if not ret:
+                break
 
-    # Create masked videos
-    writer1 = cv2.VideoWriter(newPath1, fourcc, fps, (w, h))
-    writer2 = cv2.VideoWriter(newPath2, fourcc, fps, (w, h))
+            hot.append(cv2.cvtColor(frame[y : y + h, x : x + w], cv2.COLOR_BGR2GRAY))
 
-    # Mask each frame for both videos
-    print("Masking videos...")
+        vid1.release()
+        vid2.release()
 
-    while True:
-        ret, frame = vid1.read()
-        if not ret:
-            break
+        return np.stack(cold, axis=0), np.stack(hot, axis=0)
+    else:
+        vid = cv2.VideoCapture(path1)
+        cold, hot = [], []
+        fps = vid.get(cv2.CAP_PROP_FPS)
 
-        roiFrame = frame[y : y + h, x : x + w]
-        writer1.write(roiFrame)
+        # Create window to display frame and select RoI
+        ret, frame = vid.read()
+        while True:
+            cv2.imshow("Press 's' to skip frame, 'c' to choose RoI", frame)
+            key = cv2.waitKey(0) & 0xFF
+            if key == ord("s"):
+                cv2.destroyAllWindows()
+                ret, frame = vid.read()
 
-    while True:
-        ret, frame = vid2.read()
-        if not ret:
-            break
+                if not ret:
+                    raise Exception("Video 1 ended before selecting RoI")
 
-        roiFrame = frame[y : y + h, x : x + w]
-        writer2.write(roiFrame)
+                continue
+            elif key == ord("c"):
+                cv2.destroyAllWindows()
+                break
 
-    # Release resources
-    vid1.release()
-    vid2.release()
-    writer1.release()
-    writer2.release()
-    cv2.destroyAllWindows()
+        # Get RoI coordinates
+        x, y, w, h = cv2.selectROI("Select RoI", frame)
 
-    return newPath1, newPath2
+        # Mask each frame for both videos. Assumes that the first ten seconds
+        # is the cold video and the rest is hot
+        while True:
+            ret, frame = vid.read()
+            if not ret:
+                break
+
+            if len(cold) < 10 * fps:
+                cold.append(cv2.cvtColor(frame[y : y + h, x : x + w], cv2.COLOR_BGR2GRAY))
+            else:
+                hot.append(cv2.cvtColor(frame[y : y + h, x : x + w], cv2.COLOR_BGR2GRAY))
+
+        vid.release()
+
+        return np.stack(cold, axis=0), np.stack(hot, axis=0)
 
 
 def process(coldPath, hotPath, savePath="temp/", method="PCT", options={}):
@@ -121,11 +105,8 @@ def process(coldPath, hotPath, savePath="temp/", method="PCT", options={}):
     Returns:
         plotPath: Path to the plot of the results
     """
-    print("Creating mask...")
-    coldMask, hotMask = createMask(coldPath, hotPath)
-
     print("Reading videos...")
-    cold, hot = readVideo(coldMask), readVideo(hotMask)
+    cold, hot = createMask2(coldPath, hotPath, coldPath is None)
 
     print("Creating folder...")
     try:
